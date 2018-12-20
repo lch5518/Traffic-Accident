@@ -5,7 +5,7 @@ getwd()
 install.packages('reaflet')
 library(leaflet)
 
-tra <- function(x1){
+traffic <- function(x1){
   pop_1214<-read.csv("사망교통사고_20122014.csv")
   pop_15<-read.csv("사망교통사고_2015.csv")
   pop_16<-read.csv("사망교통사고_2016.csv")
@@ -15,9 +15,9 @@ tra <- function(x1){
   kor <-rbind(pop_1214,pop_15,pop_16,pop_17)
   
   #사고발생지 시도 추출
-  z1 <- kor$발생지시도
-  z2 <- sort(unique(z1))
-  z3 <- data.frame(z2)
+  z1 <- kor$발생지시도 #전국 사망교통사고 데이터에서 사고가 발생한 시도만 추출
+  z2 <- sort(unique(z1)) #z1에서 추출한 시도에서 중복제거(unique) 후 정렬(sort)
+  z3 <- data.frame(z2) #z2에서 추출한 factor형 데이터를 datafram형태로 변환
 
   #사고발생지 시군구 추출
   y1 <- kor$발생지시군구
@@ -30,6 +30,9 @@ tra <- function(x1){
   yd <- 0
   
   #발생지 시도인지 판별
+  #z3에는 강원, 경기, ... , 충북까지 전국에 17개의 시도가 데이터가 존재하기에 
+  #이를 for문을 사용해서 하나씩 비교해서 입력값이 '시도'이면 zd에 저장
+  #as.character(z3[1,]) : z3의 첫번째 값은 "강원"으로 factor형으로 저장되어 있기에 문자형으로 변환
   for(k in 1:17){
     if(x1==as.character(z3[k,])){zd <- as.character(z3[k,]) }
   }
@@ -42,6 +45,7 @@ tra <- function(x1){
   }
   
   #입력한 지역명의 데이터만 추출
+  #zd==0 만약 입력값이 시군구일 경우 '시도'데이터변수인 zd은 초기값 0을 가진다.
   if(zd == 0){
     dt <- subset(kor,kor$발생지시군구==yd)
   }else{
@@ -89,9 +93,10 @@ tra <- function(x1){
                      options = layersControlOptions(collapsed = FALSE)) #옵션
 }
 
-tra("서울")
-tra("강남구")
-tra("대전")
-tra("대덕구")
-tra("전국")
-tra("청주시")
+#example
+traffic("서울")
+traffic("강남구")
+traffic("대전")
+traffic("대덕구")
+traffic("전국")
+traffic("청주시")
