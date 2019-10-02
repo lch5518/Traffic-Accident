@@ -1,5 +1,6 @@
 #베이직알프로그래밍_(이창현, 고근영, 전가예)
-setwd('D:/R')
+choose.dir()
+setwd("D:\\Traffic-Accident")
 getwd()
 
 install.packages('reaflet')
