@@ -1,6 +1,6 @@
-#베이직알프로그래밍_(이창현, 고근영, 전가예)
+#베이직알프로그래밍
 choose.dir()
-setwd("D:\\Traffic-Accident")
+setwd("C:/Users/dydeh/jupyternotebook_folder/Traffic-Accident")
 getwd()
 
 install.packages('reaflet')
@@ -11,6 +11,7 @@ traffic <- function(x1){
   pop_15<-read.csv("사망교통사고_2015.csv")
   pop_16<-read.csv("사망교통사고_2016.csv")
   pop_17<-read.csv("사망교통사고_2017.csv")
+  
   
   # 2012년~2017년 사이의 전국 사망교통사고
   kor <-rbind(pop_1214,pop_15,pop_16,pop_17)
@@ -68,7 +69,7 @@ traffic <- function(x1){
                lat = ~위도,
                weight = 2, #선 두께 
                radius = ~sqrt(사상자수) * 130, #원 크기 
-               popup =  ~paste0(발생지시군구,"<br/>연도: ",발생년,"<br/>",주야, "<br/>Frequency: ",사상자수,"<br/>",법규위반),
+               popup =  ~paste0(발생지시군구,"<br/>연도: ",발생년,"<br/>",주야, "<br/>사상자수: ",사상자수,"<br/>",법규위반),
                fillColor = "red", # 원안쪽 색상 
                highlightOptions = highlightOptions( # 포인트이동시 강조 
                  weight = 10,
@@ -81,7 +82,7 @@ traffic <- function(x1){
                lat = ~위도,
                weight = 2, #선 두께 
                radius = ~sqrt(사상자수) * 130, #원 크기 
-               popup =  ~paste0(발생지시군구,"<br/>연도: ",발생년,"<br/>",주야, "<br/>Frequency: ",사상자수,"<br/>",법규위반),
+               popup =  ~paste0(발생지시군구,"<br/>연도: ",발생년,"<br/>",주야, "<br/>사상자수: ",사상자수,"<br/>",법규위반),
                fillColor = "red", # 원안쪽 색상 
                highlightOptions = highlightOptions( # 포인트이동시 강조 
                  weight = 10,
@@ -101,3 +102,47 @@ traffic("대전")
 traffic("대덕구")
 traffic("전국")
 traffic("청주시")
+
+
+
+
+### 데이터시각화
+install.packages("dplyr")
+install.packages("sqldf")
+install.packages("ggplot2")
+library(dplyr)
+library(sqldf)
+library(ggplot2)
+
+pop_1214<-read.csv("사망교통사고_20122014.csv")
+pop_15<-read.csv("사망교통사고_2015.csv")
+pop_16<-read.csv("사망교통사고_2016.csv")
+pop_17<-read.csv("사망교통사고_2017.csv")
+
+
+# 2012년~2017년 사이의 전국 사망교통사고
+kor <-rbind(pop_1214,pop_15,pop_16,pop_17)
+
+kor %>% dim()
+kor %>% head()
+kor %>% names()
+
+year_death <- sqldf('select 발생년, sum(사망자수) 사망자수, sum(중상자수) 중상자수, sum(경상자수) 경상자수 from kor group by 발생년')
+year_death
+
+
+Violation <- sqldf('select 법규위반, count(법규위반) 법규위반수 from kor group by 법규위반')
+Violation
+
+
+#막대그래프
+ggplot(year_death, aes(x=발생년, y=사망자수)) + geom_bar(stat="identity")
+ggplot(year_death, aes(x=발생년, y=중상자수)) + geom_bar(stat="identity")
+ggplot(year_death, aes(x=발생년, y=경상자수)) + geom_bar(stat="identity")
+
+ggplot(Violation, aes(x = 법규위반, y = 법규위반수)) + geom_bar(stat="identity") +   theme(axis.text.x=element_text(angle=90, hjust=1))
+
+
+
+
+
